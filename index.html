@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic Table with Fetch API</title>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 50%;
+    }
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+</head>
+<body>
+<form id="userForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" required>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <button type="submit" onclick="cadastrar()">Cadastrar</button>
+</form>
+<table id="dataTable">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    // Função para carregar os dados da API e criar a tabela dinamicamente
+    function fetchDataAndCreateTable() {
+        fetch('https://663d4c1517145c4d8c393376.mockapi.io/usuariosFetch/usuario')
+        .then(response => response.json())
+        .then(data => {
+            const tableBody = document.querySelector("#dataTable tbody");
+            data.forEach(user => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${user.id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error :', error);
+        });
+    }
+    function cadastrar(){
+        let name = document.getElementById('name').value;
+        let email = document.getElementById('email').value;
+        let data = {name, email};
+        fetch('https://663d4c1517145c4d8c393376.mockapi.io/usuariosFetch/usuario', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log('Data sent successfully:', result);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Chamar a função para carregar os dados quando a página carregar
+    window.onload = fetchDataAndCreateTable;
+</script>
+
+</body>
+</html>
